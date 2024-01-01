@@ -29,7 +29,7 @@ class MoleculeSimulator:
         self.optimizer = 'cobyla'
         self.energy_threshold = 1e-10
 
-        self.variational_energies = {}
+        self.variational_energies = []
         self.optimal_parameters = []
 
         self.list_of_operators = {}
@@ -100,15 +100,19 @@ class MoleculeSimulator:
         circuit = copy(self.current_state)
         
         for i in range(len(self.excitations)):
-            circuit.append(self.excitations[i], self.n_qubits)
-            self.list_of_operators.append(self.pool.names[i])
+            #print("EXITATIONS" + str(self.excitations))
+            circuit.append(self.excitations[i],  list(range(self.n_qubits))) #circuit.append(self.excitations[i], self.n_qubits)
+            #print("POOL" + str(self.pool.names))
+            self.list_of_operators[i] = (self.pool.names[i])#self.list_of_operators.append(self.pool.names[i])
         
         return 
 
     def vqe(self):
 
         #Adding HF energy as the first variational energy
-        self.variational_energies.append(uf.expectation_value(self.qiskit_ham, copy(self.current_state)))
+        #print("VARIATONAL ENERGIES = "+str(self.variational_energies))
+        # print("CURRENT STATE = "+str(self.current_state))
+        self.variational_energies.append(str(uf.expectation_value(self.qiskit_ham, copy(self.current_state), None)))
         self.beginning()
 
         local = False
@@ -129,16 +133,27 @@ class MoleculeSimulator:
 
         return
     
+    # ncessary?
+    # def get_parametrized_circuit(self, params):
+    #     parametrized_circuit = copy(self.current_state)
+    #     for i, param in enumerate(params):
+    #         #print("PARAM = " + str(param))
+    #         parametrized_circuit.ry(param, i)
+    #         #parametrized_circuit.x(param)
+    #     return parametrized_circuit
+    
+    def loss_function(self, params):
+        
+        # parametrized_circuit = self.get_parametrized_circuit(params)
+        # return uf.expectation_value(self.qiskit_ham, parametrized_circuit, self.nshots)
+        return uf.expectation_value(self.qiskit_ham, self.current_state, [params[0] for i in range(2**self.n_qubits)]) #TODO 
+    
     def vqe_step(self):
 
         x0 = list(self.current_parameters)
-
-        optimization = minimize(loss_function, x0=x0, method=self.optimizer)
+        print("OPTIMIZATION = " + str(x0))
+        optimization = minimize(self.loss_function, x0=x0, method=self.optimizer)
         self.current_parameters = optimization.x
         self.variational_energies.append(optimization.fun)
 
         return
-
-    def loss_function(self, params):
-        
-        return uf.expectation_value(self.qiskit_ham, self.current_state(params), self.nshots)

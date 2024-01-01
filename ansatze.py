@@ -32,14 +32,14 @@ class UCCSDexcitations:
                 name = 'X' + f'{i}' + 'Y' + f'{k}'
                 single_generators.append(self.get_pauli_operators([i, k], 'XY'))
                 single_excitations.append(ex.fermionic_single_excitation(qubits_involved=[i, k], 
-                                                                        pauli_involved=['X','Y'], 
+                                                                        pauli_involved=['X','Y'], # pauli_involved=['X','Y']
                                                                         qubits= self.n_qubits,
                                                                         param_name=param_name))
                 self.param_names.append(param_name)
                 self.names.append(name)
                 #YX operator
-                param_name = 'phi_' + 'X' + f'{k}' + 'Y' + f'{i}'
-                name = 'X' + f'{k}' + 'Y' + f'{i}'
+                param_name = 'phi_' + 'Y' + f'{k}' + 'X' + f'{i}'
+                name = 'Y' + f'{k}' + 'X' + f'{i}'
                 single_generators.append(self.get_pauli_operators([i, k], 'YX'))
                 single_excitations.append(ex.fermionic_single_excitation(qubits_involved=[i, k], 
                                                                         pauli_involved=['Y','X'], 
@@ -96,7 +96,7 @@ class UCCSDexcitations:
                         #YYXY operator
                         param_name = 'phi_' + 'Y' + f'{qubit_list[0]}' + 'Y' + f'{qubit_list[1]}' + 'X' + f'{qubit_list[2]}' + 'Y' + f'{qubit_list[3]}'
                         name = 'Y' + f'{qubit_list[0]}' + 'Y' + f'{qubit_list[1]}' + 'X' + f'{qubit_list[2]}' + 'Y' + f'{qubit_list[3]}'
-                        double_generators.append(self.get_pauli_operators(qubit_list, 'YXYY'))
+                        double_generators.append(self.get_pauli_operators(qubit_list, 'YYXY'))
                         double_excitations.append(ex.fermionic_double_excitation(qubits_involved=qubit_list,
                                                                                 pauli_involved=('Y', 'Y', 'X', 'Y'),
                                                                                 qubits= self.n_qubits,
@@ -157,7 +157,7 @@ class UCCSDexcitations:
             if pauli_involved == 'XY':
                 op = Xs[qubits_involved[0]] & Ys[qubits_involved[1]]
             elif pauli_involved == 'YX':
-                op = Xs[qubits_involved[1]] & Ys[qubits_involved[0]]
+                op = Ys[qubits_involved[1]] & Xs[qubits_involved[0]]
             else:
                 raise ValueError
 
@@ -172,21 +172,23 @@ class UCCSDexcitations:
         elif len(qubits_involved) == 4:
 
             if pauli_involved == 'YXXX':
-                op = Ys[qubits_involved[0]] & Xs[qubits_involved[1]] & Xs[qubits_involved[2]] & Xs[qubits_involved[0]]
+                op = Ys[qubits_involved[0]] & Xs[qubits_involved[1]] & Xs[qubits_involved[2]] & Xs[qubits_involved[3]]
             elif pauli_involved == 'XYXX':
                 op = Xs[qubits_involved[0]] & Ys[qubits_involved[1]] & Xs[qubits_involved[2]] & Xs[qubits_involved[3]]
             elif pauli_involved == 'YYYX':
-                op = Ys[qubits_involved[0]] & Ys[qubits_involved[1]] & Ys[qubits_involved[3]] & Xs[qubits_involved[3]]
+                op = Ys[qubits_involved[0]] & Ys[qubits_involved[1]] & Ys[qubits_involved[2]] & Xs[qubits_involved[3]]
             elif pauli_involved == 'YYXY':
                 op = Ys[qubits_involved[0]] & Ys[qubits_involved[1]] & Xs[qubits_involved[2]] & Ys[qubits_involved[3]]
             elif pauli_involved == 'XXYX':
                 op = Xs[qubits_involved[0]] & Xs[qubits_involved[1]] & Ys[qubits_involved[2]] & Xs[qubits_involved[3]]
             elif pauli_involved == 'XXXY':
-                op = Xs[qubits_involved[0]] & Xs[qubits_involved[1]] & Xs[qubits_involved[4]] & Ys[qubits_involved[3]]
+                op = Xs[qubits_involved[0]] & Xs[qubits_involved[1]] & Xs[qubits_involved[2]] & Ys[qubits_involved[3]]
+                #op = Xs[qubits_involved[0]] & Xs[qubits_involved[1]] & Xs[qubits_involved[4]] & Ys[qubits_involved[3]]
             elif pauli_involved == 'YXYY':
                 op = Ys[qubits_involved[0]] & Xs[qubits_involved[1]] & Ys[qubits_involved[2]] & Ys[qubits_involved[3]]
             elif pauli_involved == 'XYYY':
-                op = Xs[qubits_involved[0]] & Ys[qubits_involved[1]] & Ys[qubits_involved[2]] & Ys[qubits_involved[5]]
+                op = Xs[qubits_involved[0]] & Ys[qubits_involved[1]] & Ys[qubits_involved[2]] & Ys[qubits_involved[3]]
+                #op = Xs[qubits_involved[0]] & Ys[qubits_involved[1]] & Ys[qubits_involved[2]] & Ys[qubits_involved[5]]
             else:
                 raise ValueError
 

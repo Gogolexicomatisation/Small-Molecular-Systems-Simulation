@@ -29,19 +29,19 @@ def of_to_qiskit_op(qubit_operator):
 
     return op
 
-def measure_qc(circuit, backend, nshots=-1):
+def measure_qc(circuit, backend, nshots=-1): #TODO
 
-    job = backend.run(circuit)
+    job = backend.run(circuit, nshots)
 
     result = job.result()
     counts = result.get_counts()
 
     return counts
 
-def expectation_value(pauli_operator, circuit, shots):
+def expectation_value(pauli_operator, circuit, params):
 
     estimator = Estimator()
-    result = estimator.run(circuit, pauli_operator).result()
+    result = estimator.run(circuit, pauli_operator, params).result() #TODO
 
     mean_value = result.values[0].real
 
