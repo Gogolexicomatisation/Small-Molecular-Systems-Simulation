@@ -13,10 +13,10 @@ class Molecule():
 
         self.name = mol_name
 
-        if self.name == "H2" : atom_list = ['H', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, bond_length)]
-        elif self.name == "H4" : atom_list = ['H', 'H', 'H', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, bond_length), (0.0, 0.0, 2*bond_length), (0.0, 0.0, 3*bond_length)]
-        elif self.name == "LiH" : atom_list = ['Li', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, bond_length)]
-        elif self.name == 'BeH2' : atom_list = ['Be', 'H', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, -bond_length/2), (0.0, 0.0, bond_length/2)]
+        if self.name == "H2" : atom_list = ['H', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, bond_length)]; occ_indices = range(0)
+        elif self.name == "H4" : atom_list = ['H', 'H', 'H', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, bond_length), (0.0, 0.0, 2*bond_length), (0.0, 0.0, 3*bond_length)]; occ_indices = range(1) 
+        elif self.name == "LiH" : atom_list = ['Li', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, bond_length)]; occ_indices = range(0)
+        elif self.name == 'BeH2' : atom_list = ['Be', 'H', 'H']; coord_list = [(0.0, 0.0, 0.0), (0.0, 0.0, -bond_length/2), (0.0, 0.0, bond_length/2)]; occ_indices = range(0)
 
         else: raise ValueError("Unkown molecule name. Please check the contents of the Molecule class")
 
@@ -46,7 +46,7 @@ class Molecule():
 
         print(self.molecule.n_orbitals)
 
-        self.occupied_indices = range(0)
+        self.occupied_indices = occ_indices
         self.active_indices = range(0,self.molecule.n_orbitals)
 
         #Creating the Qubit Hamiltonian
@@ -67,4 +67,4 @@ class Molecule():
 
         self.initial_state = initial_state
 
-        return 
+        return

@@ -6,6 +6,7 @@ from scipy.optimize import minimize
 import molecule
 import ansatze
 import useful_functions as uf
+import random
 
 class MoleculeSimulator:
 
@@ -27,7 +28,6 @@ class MoleculeSimulator:
         #___________________________________________ Initialize _____________________________________
 
         self.optimizer = 'cobyla'
-        self.energy_threshold = 1e-10
 
         self.variational_energies = []
         self.optimal_parameters = []
@@ -39,10 +39,17 @@ class MoleculeSimulator:
         self.generators = self.pool.single_generators + self.pool.double_generators
         self.excitations = self.pool.single_excitations + self.pool.double_excitations
 
-        self.current_parameters = [0]
+        self.current_parameters = [random.uniform(0.01, 0.09) for _ in range(len(self.excitations))]
 
-        self.max_steps = 200
+        self.max_steps = 30
         self.num_steps = 0
+
+        if self.name == "H2" : energy_threshold = 1e-10
+        elif self.name == "H4" : energy_threshold = 1e-10 
+        elif self.name == "LiH" : energy_threshold = 1e-3
+        elif self.name == 'BeH2' : energy_threshold = 1e-2
+        
+        self.energy_threshold = energy_threshold
 
     def __repr__(self):
 
@@ -83,7 +90,7 @@ class MoleculeSimulator:
     def results(self):
 
         print('--------------------------------------------------')
-        if self.num_steps != self.max_steps:
+        if self.num_steps != self.max_steps + 1 :
             print('CONVERGED!')
             print('Number of iterations until convergence: ', self.num_steps)
         else:
@@ -109,9 +116,10 @@ class MoleculeSimulator:
 
     def vqe(self):
 
+        
         #Adding HF energy as the first variational energy
         #print("VARIATONAL ENERGIES = "+str(self.variational_energies))
-        # print("CURRENT STATE = "+str(self.current_state))
+        #print("CURRENT STATE = "+str(self.current_state))
         self.variational_energies.append(str(uf.expectation_value(self.qiskit_ham, copy(self.current_state), None)))
         self.beginning()
 
@@ -123,7 +131,7 @@ class MoleculeSimulator:
             self.vqe_step()
             local = (np.abs(self.variational_energies[-1] - self.fci_energy) < self.energy_threshold)
             
-            local = local and (self.num_steps >= self.max_steps)
+            local = local or (self.num_steps >= self.max_steps)
 
             self.num_steps += 1
             self.verbose()
@@ -133,24 +141,16 @@ class MoleculeSimulator:
 
         return
     
-    # ncessary?
-    # def get_parametrized_circuit(self, params):
-    #     parametrized_circuit = copy(self.current_state)
-    #     for i, param in enumerate(params):
-    #         #print("PARAM = " + str(param))
-    #         parametrized_circuit.ry(param, i)
-    #         #parametrized_circuit.x(param)
-    #     return parametrized_circuit
     
     def loss_function(self, params):
         
         # parametrized_circuit = self.get_parametrized_circuit(params)
         # return uf.expectation_value(self.qiskit_ham, parametrized_circuit, self.nshots)
-        return uf.expectation_value(self.qiskit_ham, self.current_state, [params[0] for i in range(2**self.n_qubits)]) #TODO 
+        return uf.expectation_value(self.qiskit_ham, self.current_state, params) #TODO 
     
     def vqe_step(self):
 
-        x0 = list(self.current_parameters)
+        x0 = self.current_parameters
         print("OPTIMIZATION = " + str(x0))
         optimization = minimize(self.loss_function, x0=x0, method=self.optimizer)
         self.current_parameters = optimization.x

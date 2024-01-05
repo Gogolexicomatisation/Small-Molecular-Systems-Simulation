@@ -25,9 +25,9 @@ def fermionic_single_excitation(qubits_involved, pauli_involved, qubits, param_n
         circuit.cx(i+1, i)
 
     if string_exci =='XY':
-        circuit.rz((1/2)*theta, qubits_involved[0])
+        circuit.rz((1/2) * theta, qubits_involved[0])
     else:
-        circuit.rz(-2*theta, qubits_involved[0])
+        circuit.rz(-2 * theta, qubits_involved[0])
     
     for i in range(qubits_involved[0], qubits_involved[1]):
         circuit.cx(i+1, i)
@@ -61,7 +61,7 @@ def fermionic_double_excitation(qubits_involved, pauli_involved, qubits, param_n
         else:
             circuit.rx(np.pi / 2, qubits_involved[i])
 
-    for i in reversed(range(qubits_involved[1] -1, qubits_involved[2]+1)):
+    for i in reversed(range(qubits_involved[1] - 1, qubits_involved[2] + 1)):
         circuit.cx(i, i + 1)
 
     if string_exci == 'XYXX' or string_exci == 'YXXX' or string_exci == 'YYYX' or string_exci == 'YYXY':
@@ -69,7 +69,7 @@ def fermionic_double_excitation(qubits_involved, pauli_involved, qubits, param_n
     else:
         circuit.rz(+(1 / 8) * theta, qubits_involved[0])
 
-    for i in range(qubits_involved[1] -1, qubits_involved[2]+1):
+    for i in range(qubits_involved[1] -1, qubits_involved[2] + 1):
         circuit.cx(i, i + 1)
 
     for i in range(len(pauli_involved)):
