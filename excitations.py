@@ -84,4 +84,64 @@ def fermionic_double_excitation(qubits_involved, pauli_involved, qubits, param_n
     return circuit
     
 
+def adaptVQE_single_excitation(qubits_involved, qubits, param_name=None):
+    if param_name is None:
+        theta = Parameter('theta')
+    else:
+        theta = Parameter(param_name)
+    circuit = QuantumCircuit(qubits)
+    circuit.rx(np.pi / 2, qubits_involved[0])
+    circuit.rz(np.pi / 2, qubits_involved[1])
+    circuit.rx(np.pi / 2, qubits_involved[1])
+    circuit.cx(qubits_involved[1], qubits_involved[0])
+    circuit.rz(theta, qubits_involved[0])
+    circuit.rx(theta, qubits_involved[1])
+    circuit.cx(qubits_involved[1], qubits_involved[0])
+    circuit.rx(-np.pi / 2, qubits_involved[0])
+    circuit.rx(-np.pi / 2, qubits_involved[1])
+    circuit.rz(-np.pi / 2, qubits_involved[1])
+    return circuit
+
+
+def adaptVQE_double_excitation(qubits_involved, qubits, param_name=None):
+    if param_name is None:
+        theta = Parameter('theta')
+    else:
+        theta = Parameter(param_name)
+    circuit = QuantumCircuit(qubits)
+    circuit.cx(qubits_involved[1], qubits_involved[0])
+    circuit.cx(qubits_involved[3], qubits_involved[2])
+    circuit.x(qubits_involved[0])
+    circuit.x(qubits_involved[2])
+    circuit.cx(qubits_involved[3], qubits_involved[1])
+    circuit.ry(1 / 8 * theta, qubits_involved[3])
+    circuit.h(qubits_involved[2])
+    circuit.cx(qubits_involved[3], qubits_involved[2])
+    circuit.ry(-1 / 8 * theta, qubits_involved[3])
+    circuit.h(qubits_involved[0])
+    circuit.cx(qubits_involved[3], qubits_involved[0])
+    circuit.ry(1 / 8 * theta, qubits_involved[3])
+    circuit.cx(qubits_involved[3], qubits_involved[2])
+    circuit.ry(-1 / 8 * theta, qubits_involved[3])
+    circuit.h(qubits_involved[1])
+    circuit.cx(qubits_involved[3], qubits_involved[1])
+    circuit.ry(1 / 8 * theta, qubits_involved[3])
+    circuit.cx(qubits_involved[3], qubits_involved[2])
+    circuit.ry(-1 / 8 * theta, qubits_involved[3])
+    circuit.cx(qubits_involved[3], qubits_involved[0])
+    circuit.ry(1 / 8 * theta, qubits_involved[3])
+    circuit.h(qubits_involved[0])
+    circuit.cx(qubits_involved[3], qubits_involved[2])
+    circuit.ry(-1 / 8 * theta, qubits_involved[3])
+    circuit.h(qubits_involved[2])
+    circuit.rz(-np.pi / 2, qubits_involved[1])
+    circuit.cx(qubits_involved[3], qubits_involved[1])
+    circuit.rz(np.pi / 2, qubits_involved[3])
+    circuit.rz(-np.pi / 2, qubits_involved[1])
+    circuit.ry(-np.pi / 2, qubits_involved[1])
+    circuit.x(qubits_involved[2])
+    circuit.x(qubits_involved[0])
+    circuit.cx(qubits_involved[3], qubits_involved[2])
+    circuit.cx(qubits_involved[1], qubits_involved[0])
+    return circuit
  

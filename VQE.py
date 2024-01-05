@@ -120,7 +120,7 @@ class MoleculeSimulator:
         #Adding HF energy as the first variational energy
         #print("VARIATONAL ENERGIES = "+str(self.variational_energies))
         #print("CURRENT STATE = "+str(self.current_state))
-        self.variational_energies.append(str(uf.expectation_value(self.qiskit_ham, copy(self.current_state), None)))
+        self.variational_energies.append(str(uf.expectation_value(self.qiskit_ham, copy(self.current_state), [])))
         self.beginning()
 
         local = False
@@ -146,7 +146,7 @@ class MoleculeSimulator:
         
         # parametrized_circuit = self.get_parametrized_circuit(params)
         # return uf.expectation_value(self.qiskit_ham, parametrized_circuit, self.nshots)
-        return uf.expectation_value(self.qiskit_ham, self.current_state, params) #TODO 
+        return uf.expectation_value(self.qiskit_ham, self.current_state, params)
     
     def vqe_step(self):
 
